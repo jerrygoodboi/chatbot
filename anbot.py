@@ -18,7 +18,7 @@ def audio_gen(text):
         #elevenlabs.save(audio, "output.mp3")
         tts = gTTS(text)
         tts.save("output.mp3")
-        os.system("termux-media-player play output.mp3 2&> /dev/null")
+        os.system("mplayer output.mp3 2&> /dev/null")
 def times():
     current_time = datetime.datetime.now()
     return current_time.strftime('%Y-%m-%d %H:%M:%S')
