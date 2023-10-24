@@ -6,6 +6,7 @@ import requests
 import datetime
 recognizer = sr.Recognizer()
 url = 'http://api.brainshop.ai/get?bid=178546&key=gCppj0KnUpICcFI1&uid=Eldhose&msg='
+elevenlabs.set_api_key("a7553897f5f8de617465b26f697beee3")
 def send_message(input_text):
     response = requests.get(url + input_text)
     data = response.json()
