@@ -1,0 +1,5 @@
+while true
+do
+read a
+curl 'http://api.brainshop.ai/get?bid=178546&key=gCppj0KnUpICcFI1&uid=Eldhose&msg='$a
+done
