@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import os
-from gtts import gTTS
 import time
+import elevenlabs
 import requests 
 import datetime
 recognizer = sr.Recognizer()
@@ -11,13 +11,13 @@ def send_message(input_text):
     data = response.json()
     return data['cnt']
 def audio_gen(text):
-        #audio = elevenlabs.generate(
-         #       text,
-          #      voice = "Glinda"
-           #      )
-        #elevenlabs.save(audio, "output.mp3")
-        tts = gTTS(text)
-        tts.save("output.mp3")
+        audio = elevenlabs.generate(
+                text,
+                voice = "Glinda"
+                 )
+        elevenlabs.save(audio, "output.mp3")
+        #tts = gTTS(text)
+        #tts.save("output.mp3")
         os.system("mplayer output.mp3 2&> /dev/null")
 def times():
     current_time = datetime.datetime.now()
