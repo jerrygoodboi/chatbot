@@ -3,9 +3,37 @@ import os
 import requests 
 import datetime
 import elevenlabs
+from pytube import YouTube
+import vlc
+from youtubesearchpython import VideosSearch
+#
 recognizer = sr.Recognizer()
 url = 'http://api.brainshop.ai/get?bid=178546&key=gCppj0KnUpICcFI1&uid=Eldhose&msg='
-elevenlabs.set_api_key("a7553897f5f8de617465b26f697beee3")
+elevenlabs.set_api_key("fbaab3584cf611c03ebc321df93e0824")
+#
+def mus(text):
+    videos_search = VideosSearch(text, limit = 1)
+    results = videos_search.result()
+    if 'result' in results:
+       first_video = results['result'][0]
+       video_url = first_video['link']
+       print("URL of the first video:", video_url)
+    else:
+       print("No results found")
+    yt = YouTube(video_url)
+    audio_stream = yt.streams.filter(only_audio=True).first()
+    audio_url = audio_stream.url
+    instance = vlc.Instance()
+    media = instance.media_new(audio_url)
+    player = instance.media_player_new()
+    player.set_media(media)
+    player.play()
+    while True:
+        text = rec(3)
+        if "stop" in text:
+            player.stop()
+            break
+#
 def send_message(input_text):
     response = requests.get(url + input_text)
     data = response.json()
@@ -38,15 +66,17 @@ def rec(val):
 while True:
     text = rec(3)
     print(text)
-    if "remmacs" in text or "remix" in text or "remax" in text:
+    if "remmacs" in text or "remix" in text or "remax" in text or "remarks" in text or "rema" in text:
         audio_gen("hey there")
         while True:
             text = rec(5)
             if "time" in text:
                 text = time()
-            if "goodbye" in text:
+            elif "goodbye" in text:
                 audio_gen("goodbye")
                 break
+            elif "play" in text:
+                mus(text)
             else:
                 text = text.replace(" ", "%20")
                 text = send_message(text)
