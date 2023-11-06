@@ -8,9 +8,44 @@ import vlc
 from youtubesearchpython import VideosSearch
 #
 recognizer = sr.Recognizer()
-url = 'http://api.brainshop.ai/get?bid=178546&key=gCppj0KnUpICcFI1&uid=Eldhose&msg='
 elevenlabs.set_api_key("fbaab3584cf611c03ebc321df93e0824")
 #
+conversation = "This is a conversation between User and remmacs, a  friendly chatbot. remmacs is helpful, kind, honest, good at writing, and never fails to answer any requests immediately and with precision and you are remmacs the chatbot developed by cipher.\n\n"
+def send_post_request(url, data):
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Request failed with status code: {response.status_code}")
+        print("Response content:")
+        print(response.text)
+        return None
+def comp(text):
+    # Initialize conversation history with an initial prompt
+    global conversation
+    while True:
+        user_input = text 
+        conversation += "User: " + user_input + "\n"
+
+        # Create a JSON request with the entire conversation
+        json_request = {
+            "prompt": conversation,
+            "n_predict": 128
+        }
+
+        # Send the request and get the response
+        response = send_post_request("http://127.0.0.1:8080/completion", json_request)
+
+        if response:
+            if "content" in response:
+                chatbot_response = response["content"]
+                conversation += chatbot_response + "\n" 
+                return chatbot_response
+            else:
+                print("Chatbot: No response from the server.")
+        else:
+            print("Request failed. Check the server or URL.") 
 def mus(text):
     videos_search = VideosSearch(text, limit = 1)
     results = videos_search.result()
@@ -34,10 +69,6 @@ def mus(text):
             player.stop()
             break
 #
-def send_message(input_text):
-    response = requests.get(url + input_text)
-    data = response.json()
-    return data['cnt']
 def audio_gen(text):
         audio = elevenlabs.generate(
                 text,
@@ -78,7 +109,6 @@ while True:
             elif "play" in text:
                 mus(text)
             else:
-                text = text.replace(" ", "%20")
-                text = send_message(text)
+                text = comp(text)
             print(text)
             audio_gen(text)
