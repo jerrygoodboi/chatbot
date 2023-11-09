@@ -30,10 +30,27 @@ def comp(text):
 
         # Create a JSON request with the entire conversation
         json_request = {
-            "prompt": conversation,
-            "n_predict": 50
-        }
-
+                "n_predict": 50,
+                "temperature": 0.7,
+                "stop": ["</s>", "remmacs:", "User:"],
+                "repeat_last_n": 256,
+                "repeat_penalty": 1.2,
+                "top_k": 40,
+                "top_p": 0.5,
+                "tfs_z": 1,
+                "typical_p": 1,
+                "presence_penalty": 0,
+                "frequency_penalty": 0,
+                "mirostat": 0,
+                "mirostat_tau": 5,
+                "mirostat_eta": 0.1,
+                "grammar": "",
+                "n_probs": 0,
+                "image_data": [],
+                "cache_prompt": True,
+                "slot_id": 0,
+                "prompt": conversation
+                }
         # Send the request and get the response
         response = send_post_request("http://127.0.0.1:8080/completion", json_request)
 
@@ -50,11 +67,11 @@ def mus(text):
     videos_search = VideosSearch(text, limit = 1)
     results = videos_search.result()
     if 'result' in results:
-       first_video = results['result'][0]
-       video_url = first_video['link']
-       print("URL of the first video:", video_url)
+        first_video = results['result'][0]
+        video_url = first_video['link']
+        print("URL of the first video:", video_url)
     else:
-       print("No results found")
+        print("No results found")
     yt = YouTube(video_url)
     audio_stream = yt.streams.filter(only_audio=True).first()
     audio_url = audio_stream.url
@@ -70,12 +87,12 @@ def mus(text):
             break
 #
 def audio_gen(text):
-        audio = elevenlabs.generate(
-                text,
-                voice = "Glinda"
-                 )
-        elevenlabs.save(audio, "output.mp3")
-        os.system("mplayer output.mp3 &> /dev/null")
+    audio = elevenlabs.generate(
+            text,
+            voice = "Glinda"
+            )
+    elevenlabs.save(audio, "output.mp3")
+    os.system("mplayer output.mp3 &> /dev/null")
 def time():
     current_time = datetime.datetime.now()
     return current_time.strftime('%Y-%m-%d %H:%M:%S')
