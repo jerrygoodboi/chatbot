@@ -10,7 +10,7 @@ from youtubesearchpython import VideosSearch
 recognizer = sr.Recognizer()
 elevenlabs.set_api_key("fbaab3584cf611c03ebc321df93e0824")
 #
-conversation = "This is a conversation between User and remmacs, a  friendly chatbot. remmacs is helpful, kind, honest, good at writing, and never fails to answer any requests immediately and with precision and you are remmacs the chatbot developed by cipher.\n\n"
+conversation = "This is a conversation between User and remmacs, a  friendly chatbot. remmacs is helpful, kind, honest, good at writing, and never fails to answer any requests immediately and with precision and remmacs replies within one sentence. " 
 def send_post_request(url, data):
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, headers=headers, json=data)
@@ -26,12 +26,12 @@ def comp(text):
     global conversation
     while True:
         user_input = text 
-        conversation += "User: " + user_input + "\n"
+        conversation += "User: " + user_input + "\n" + "remmacs:"
 
         # Create a JSON request with the entire conversation
         json_request = {
             "prompt": conversation,
-            "n_predict": 128
+            "n_predict": 50
         }
 
         # Send the request and get the response
@@ -75,7 +75,7 @@ def audio_gen(text):
                 voice = "Glinda"
                  )
         elevenlabs.save(audio, "output.mp3")
-        os.system("mplayer output.mp3 2&> /dev/null")
+        os.system("mplayer output.mp3 &> /dev/null")
 def time():
     current_time = datetime.datetime.now()
     return current_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -103,12 +103,15 @@ while True:
             text = rec(5)
             if "time" in text:
                 text = time()
+                print(text)
+                audio_gen(text)
             elif "goodbye" in text:
                 audio_gen("goodbye")
                 break
             elif "play" in text:
                 mus(text)
-            else:
+            elif text:
                 text = comp(text)
-            print(text)
-            audio_gen(text)
+                text.replace("remmacs:","",1)
+                print(text)
+                audio_gen(text)
