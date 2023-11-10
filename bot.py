@@ -1,5 +1,3 @@
-source /home/ncerc/venv/bin/activate 
-#!/bin/python3
 import speech_recognition as sr
 import os
 import requests 
